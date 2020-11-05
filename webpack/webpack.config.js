@@ -15,6 +15,12 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',
+            }, {
+                test: /\.css$/,
+                loader: ['style-loader', 'css-loader'],
+            }, {
+                test: /\.(png|svg|ttf|eot|woff2?)/,
+                loader: 'file-loader'
             }
         ],
     },
