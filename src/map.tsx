@@ -1,25 +1,36 @@
 import React from 'react';
 import './types';
 
-export default class Map extends React.Component {
+interface Props {
+    onClick: (buildingName: string) => void;
+}
+
+export default class Map extends React.Component<Props> {
+    MAP_ID = 'map';
+
     componentDidMount() {
         ymaps.ready(() => {
-            const map = new ymaps.Map('map', {
+            const myMap = new ymaps.Map(this.MAP_ID, {
                 center: [55.76, 37.64],
                 zoom: 7,
             });
-            map.events.add('click', async (e) => {
+            myMap.events.add('click', async (e) => {
                 const coords = e.get('coords');
                 console.log(coords);
-                const geocode = await ymaps.geocode(coords);
-                console.log(geocode);
+                const responseGeocode = await ymaps.geocode(coords);
+                const nearest = responseGeocode.geoObjects.get(0);
+                const buildingName = nearest.properties.get('name');
+                myMap.geoObjects.removeAll();
+                myMap.geoObjects.add(new ymaps.Placemark(coords));
+                console.log(buildingName);
+                this.props.onClick(buildingName);
             });
         });
     }
 
     render() {
         return (
-            <div id="map" style={{ width: 600, height: 400 }}/>
+            <div id={this.MAP_ID} style={{ width: 600, height: 400 }}/>
         );
     }
 }

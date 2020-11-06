@@ -22,21 +22,26 @@ class App extends React.Component<Props, State> {
         this.setState({ search: e.target.value });
     };
 
+    onChoosePoint = (buildingName: string) => {
+        this.setState({ search: buildingName });
+    }
+
     render() {
+        const { search } = this.state;
         return (
             <Container>
                 <h1>Детали заказа</h1>
                 <div>
-                    <Input onChange={this.onChange} />
+                    <Input onChange={this.onChange} value={search}/>
                     <Button>Search</Button>
                 </div>
-                <Map/>
+                <Map onClick={this.onChoosePoint}/>
             </Container>
         );
     }
 }
 
 ReactDOM.render(
-    <App />,
+    <App/>,
     document.querySelector('#root'),
 );
