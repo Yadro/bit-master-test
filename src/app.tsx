@@ -1,41 +1,62 @@
 import React, { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Container, Input } from 'semantic-ui-react';
+import { Button, Container, Input, Label } from 'semantic-ui-react';
 import Map from './map';
+import { MockHttpService } from './services/mockHttpService';
+import { Address, CrewsInfo } from './services/requestTypes';
 import 'semantic-ui-css/semantic.min.css'
 
 interface Props {}
 
 interface State {
-    search: string;
+    address: string;
+    lon: number;
+    lat: number;
+    availableCrews: CrewsInfo[];
 }
 
 class App extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            search: '',
+            address: '',
+            lon: 0,
+            lat: 0,
+            availableCrews: [],
         };
     }
 
     onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        this.setState({ search: e.target.value });
+        this.setState({ address: e.target.value });
     };
 
-    onChoosePoint = (buildingName: string) => {
-        this.setState({ search: buildingName });
+    onChoosePoint = (requestAddress: Address) => {
+        const { address, coords } = requestAddress;
+        this.setState({
+            address,
+            lat: coords[0],
+            lon: coords[1],
+        });
     }
 
+    onMakeOrder = async () => {
+        const availableCrews = await MockHttpService.getAvailableCrews(this.state);
+        this.setState({
+            availableCrews: availableCrews.crews_info,
+        });
+    };
+
     render() {
-        const { search } = this.state;
+        const { address, availableCrews } = this.state;
         return (
             <Container>
                 <h1>Детали заказа</h1>
                 <div>
-                    <Input onChange={this.onChange} value={search}/>
-                    <Button>Search</Button>
+                    <Label>Откуда</Label>
+                    <Input onChange={this.onChange} value={address}/>
                 </div>
-                <Map onClick={this.onChoosePoint}/>
+                <Map onClick={this.onChoosePoint} crews={availableCrews}/>
+                <Button onClick={this.onMakeOrder}>Заказать</Button>
             </Container>
         );
     }

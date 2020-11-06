@@ -1,30 +1,47 @@
 import React from 'react';
+import { Address, CrewsInfo } from './services/requestTypes';
 import './types';
 
 interface Props {
-    onClick: (buildingName: string) => void;
+    onClick: (address: Address) => void;
+    crews: CrewsInfo[];
 }
 
 export default class Map extends React.Component<Props> {
     MAP_ID = 'map';
+    myMap: any;
 
     componentDidMount() {
         ymaps.ready(() => {
-            const myMap = new ymaps.Map(this.MAP_ID, {
+            this.myMap = new ymaps.Map(this.MAP_ID, {
                 center: [55.76, 37.64],
                 zoom: 7,
             });
-            myMap.events.add('click', async (e) => {
+            this.myMap.events.add('click', async (e) => {
                 const coords = e.get('coords');
                 console.log(coords);
                 const responseGeocode = await ymaps.geocode(coords);
                 const nearest = responseGeocode.geoObjects.get(0);
-                const buildingName = nearest.properties.get('name');
-                myMap.geoObjects.removeAll();
-                myMap.geoObjects.add(new ymaps.Placemark(coords));
-                console.log(buildingName);
-                this.props.onClick(buildingName);
+                const address = nearest.properties.get('name');
+                this.myMap.geoObjects.removeAll();
+                this.myMap.geoObjects.add(new ymaps.Placemark(coords, null, {
+                    preset: 'islands#yellowIcon', // 'islands#darkGreenIcon'
+                }));
+                console.log(address);
+                this.props.onClick({
+                    address,
+                    coords,
+                });
             });
+        });
+    }
+
+    componentDidUpdate() {
+        const coords = this.props.crews.map(crew => [crew.lat, crew.lon]);
+        coords.forEach((coord) => {
+            this.myMap.geoObjects.add(new ymaps.Placemark(coord, null, {
+                preset: 'islands#darkGreenIcon',
+            }));
         });
     }
 
