@@ -47,7 +47,7 @@ export default class Map extends React.Component<Props> {
 
     render() {
         return (
-            <div id={this.MAP_ID} style={{ width: 600, height: 400 }}/>
+            <div id={this.MAP_ID} style={{ width: '100%', height: 600 }}/>
         );
     }
 }

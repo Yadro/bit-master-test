@@ -1,8 +1,9 @@
 import React, { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Container, Input, Label } from 'semantic-ui-react';
+import { Button, Container, Grid, Input, Label } from 'semantic-ui-react';
 import Map from './map';
-import { MockHttpService } from './services/mockHttpService';
+import CrewList from './crewList';
+import MockHttpService from './services/mockHttpService';
 import { Address, CrewsInfo } from './services/requestTypes';
 import 'semantic-ui-css/semantic.min.css'
 
@@ -46,17 +47,39 @@ class App extends React.Component<Props, State> {
         });
     };
 
+    onChooseCrew = () => {}
+
     render() {
         const { address, availableCrews } = this.state;
         return (
             <Container>
                 <h1>Детали заказа</h1>
-                <div>
+                <div style={{ margin: '10px 0' }}>
                     <Label>Откуда</Label>
                     <Input onChange={this.onChange} value={address}/>
                 </div>
-                <Map onClick={this.onChoosePoint} crews={availableCrews}/>
-                <Button onClick={this.onMakeOrder}>Заказать</Button>
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column width={10}>
+                            <Map onClick={this.onChoosePoint} crews={availableCrews}/>
+                        </Grid.Column>
+                        <Grid.Column width={6}>
+                            <CrewList crews={availableCrews} onClick={this.onChooseCrew}/>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column width={10}>
+                            <Button
+                                style={{ width: '100%' }}
+                                primary
+                                onClick={this.onMakeOrder}
+                            >
+                                Заказать
+                            </Button>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+
             </Container>
         );
     }

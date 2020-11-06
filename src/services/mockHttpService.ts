@@ -2,7 +2,7 @@ import { CrewsInfoWrap, GetAvailableCrewsParams, RequestAddress } from './reques
 import { getCrews } from '../mocks/mocks';
 
 
-export class MockHttpService {
+export default class MockHttpService {
     static getAvailableCrews(params: RequestAddress): Promise<CrewsInfoWrap> {
         const request: GetAvailableCrewsParams = {
             source_time: '20130101010101',
