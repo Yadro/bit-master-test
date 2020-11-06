@@ -1,13 +1,36 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Container } from 'semantic-ui-react';
+import React, { ChangeEvent } from 'react';
+import ReactDOM from 'react-dom';
+import { Button, Container, Input } from 'semantic-ui-react';
+import Map from './map';
 import 'semantic-ui-css/semantic.min.css'
 
-class App extends React.Component {
+interface Props {}
+
+interface State {
+    search: string;
+}
+
+class App extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            search: '',
+        };
+    }
+
+    onChange = (e: ChangeEvent<HTMLInputElement>) => {
+        this.setState({ search: e.target.value });
+    };
+
     render() {
         return (
             <Container>
-                <h1>Hello World!</h1>
+                <h1>Детали заказа</h1>
+                <div>
+                    <Input onChange={this.onChange} />
+                    <Button>Search</Button>
+                </div>
+                <Map/>
             </Container>
         );
     }
