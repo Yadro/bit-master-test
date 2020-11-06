@@ -24,23 +24,31 @@ export default class Map extends React.Component<Props> {
                 const nearest = responseGeocode.geoObjects.get(0);
                 const address = nearest.properties.get('name');
                 this.myMap.geoObjects.removeAll();
-                this.myMap.geoObjects.add(new ymaps.Placemark(coords, null, {
-                    preset: 'islands#yellowIcon', // 'islands#darkGreenIcon'
-                }));
+
                 console.log(address);
-                this.props.onClick({
-                    address,
-                    coords,
-                });
+                if (address) {
+                    this.myMap.geoObjects.add(new ymaps.Placemark(coords, null, {
+                        preset: 'islands#yellowIcon',
+                    }));
+                    this.props.onClick({
+                        address,
+                        coords,
+                    });
+                } else {
+                    this.myMap.geoObjects.add(new ymaps.Placemark(coords, null, {
+                        preset: 'islands#redIcon',
+                    }));
+                }
             });
         });
     }
 
     componentDidUpdate() {
+        // FIXME remove render old crews
         const coords = this.props.crews.map(crew => [crew.lat, crew.lon]);
         coords.forEach((coord) => {
             this.myMap.geoObjects.add(new ymaps.Placemark(coord, null, {
-                preset: 'islands#darkGreenIcon',
+                preset: 'islands#darkGreenAutoIcon',
             }));
         });
     }
