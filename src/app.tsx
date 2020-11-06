@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Container, Grid, Input, Label } from 'semantic-ui-react';
 import Map from './map';
-import CrewList from './crewList';
+import CrewList from './components/crewList';
 import MockHttpService from './services/mockHttpService';
 import { Address, CrewsInfo } from './services/requestTypes';
 import 'semantic-ui-css/semantic.min.css'
@@ -43,7 +43,7 @@ class App extends React.Component<Props, State> {
     onMakeOrder = async () => {
         const availableCrews = await MockHttpService.getAvailableCrews(this.state);
         this.setState({
-            availableCrews: availableCrews.crews_info,
+            availableCrews: availableCrews.data.crews_info,
         });
     };
 

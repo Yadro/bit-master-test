@@ -1,5 +1,5 @@
 import React from 'react';
-import { CrewsInfo } from './services/requestTypes';
+import { CrewsInfo } from '../services/requestTypes';
 import { Card, List } from 'semantic-ui-react';
 
 interface Props {
@@ -13,7 +13,7 @@ export default class CrewList extends React.Component<Props> {
         return (
             <List devided={1}>
                 {crews.map((crew) => (
-                    <List.Item>
+                    <List.Item key={crew.crew_id}>
                         <List.Icon name='car' size='large' verticalAlign='middle'/>
                         <List.Content>
                             <List.Header as='a'
