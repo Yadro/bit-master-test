@@ -1,6 +1,6 @@
 import React from 'react';
-import { Address, CrewsInfo } from './services/requestTypes';
-import './types';
+import { Address, CrewsInfo } from '../services/requestTypes';
+import '../types';
 
 interface Props {
     onClick: (address: Address) => void;

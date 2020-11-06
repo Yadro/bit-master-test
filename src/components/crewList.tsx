@@ -10,9 +10,10 @@ interface Props {
 export default class CrewList extends React.Component<Props> {
     renderItems() {
         const { crews, onClick } = this.props;
+        let sortedCrews = crews.sort((a, b) => a.distance - b.distance);
         return (
             <List devided={1}>
-                {crews.map((crew) => (
+                {sortedCrews.map((crew) => (
                     <List.Item key={crew.crew_id}>
                         <List.Icon name='car' size='large' verticalAlign='middle'/>
                         <List.Content>

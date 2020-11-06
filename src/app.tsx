@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Container, Grid, Input, Label } from 'semantic-ui-react';
-import Map from './map';
+import Map from './components/map';
 import CrewList from './components/crewList';
 import MockHttpService from './services/mockHttpService';
 import { Address, CrewsInfo } from './services/requestTypes';
@@ -31,23 +31,28 @@ class App extends React.Component<Props, State> {
         this.setState({ address: e.target.value });
     };
 
-    onChoosePoint = (requestAddress: Address) => {
+    onChoosePoint = async (requestAddress: Address) => {
         const { address, coords } = requestAddress;
-        this.setState({
+        const params = {
             address,
             lat: coords[0],
             lon: coords[1],
+        };
+        this.setState(params);
+
+        const availableCrews = await MockHttpService.getAvailableCrews(params);
+        this.setState({
+            availableCrews: availableCrews.data.crews_info,
         });
     }
 
     onMakeOrder = async () => {
-        const availableCrews = await MockHttpService.getAvailableCrews(this.state);
-        this.setState({
-            availableCrews: availableCrews.data.crews_info,
-        });
+        // TODO
     };
 
-    onChooseCrew = () => {}
+    onChooseCrew = () => {
+        // TODO
+    }
 
     render() {
         const { address, availableCrews } = this.state;
