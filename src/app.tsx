@@ -34,21 +34,18 @@ class App extends React.Component<Props, State> {
     };
 
     onChoosePoint = async (requestAddress: Address) => {
-        const { address, coords } = requestAddress;
-        const params = {
-            address,
-            coords,
-        };
-        this.setState(params);
+        this.setState(requestAddress);
+        await this.getCrew(requestAddress);
+    }
 
-        const availableCrews = await MockHttpService.getAvailableCrews(params);
-        const crews = availableCrews.data.crews_info;
+    getCrew = async (address: Address) => {
+        const availableCrews = await MockHttpService.getAvailableCrews(address);
         let selectedCrew;
-        if (crews[0]) {
-            selectedCrew = crews[0];
+        if (availableCrews[0]) {
+            selectedCrew = availableCrews[0];
         }
         this.setState({
-            availableCrews: crews,
+            availableCrews,
             selectedCrew,
         });
     }
@@ -57,8 +54,9 @@ class App extends React.Component<Props, State> {
         const { address } = this.state;
         const coords = await MapHttpService.geocoding(address);
         this.setState({
-           coords
+           coords,
         });
+        await this.getCrew({ address, coords });
     };
 
     onChooseCrew = (crewId: number) => {

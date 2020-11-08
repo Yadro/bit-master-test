@@ -21,26 +21,15 @@ export default class Map extends React.Component<Props> {
             });
             this.myMap.events.add('click', async (e) => {
                 const coords = e.get('coords');
-                console.log(coords);
                 const responseGeocode = await ymaps.geocode(coords);
                 const nearest = responseGeocode.geoObjects.get(0);
                 const address = nearest.properties.get('name');
                 this.myMap.geoObjects.removeAll();
 
-                console.log(address);
-                if (address) {
-                    this.myMap.geoObjects.add(new ymaps.Placemark(coords, null, {
-                        preset: 'islands#yellowIcon',
-                    }));
-                    this.props.onClick({
-                        address,
-                        coords,
-                    });
-                } else {
-                    this.myMap.geoObjects.add(new ymaps.Placemark(coords, null, {
-                        preset: 'islands#redIcon',
-                    }));
-                }
+                this.props.onClick({
+                    address,
+                    coords,
+                });
             });
         });
     }
@@ -48,6 +37,13 @@ export default class Map extends React.Component<Props> {
     componentDidUpdate(prevProps) {
         if (isEqual(prevProps, this.props)) {
             return;
+        }
+        if (this.props.coords) {
+            this.myMap.geoObjects.removeAll();
+            this.myMap.setCenter(this.props.coords);
+            this.myMap.geoObjects.add(new ymaps.Placemark(this.props.coords, null, {
+                preset: 'islands#yellowIcon',
+            }));
         }
         const coords = this.props.crews.map(crew => [crew.lat, crew.lon]);
         coords.forEach((coord) => {
