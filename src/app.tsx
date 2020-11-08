@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Container, Grid, Input, Label } from 'semantic-ui-react';
+import { Button, Container, Form, Grid, Input } from 'semantic-ui-react';
 import Map from './components/map';
 import CrewList from './components/crewList';
 import MockHttpService from './services/mockHttpService';
@@ -72,10 +72,12 @@ class App extends React.Component<Props, State> {
         return (
             <Container>
                 <h1>Детали заказа</h1>
-                <div style={{ margin: '10px 0' }}>
-                    <Label>Откуда</Label>
-                    <Input onChange={this.onChange} value={address}/>
-                </div>
+                <Form style={{ margin: '14px 0' }}>
+                    <Form.Field required>
+                        <label>Откуда</label>
+                        <Input onChange={this.onChange} value={address}/>
+                    </Form.Field>
+                </Form>
                 {selectedCrew &&
                     <CrewCard crew={selectedCrew}/>
                 }
