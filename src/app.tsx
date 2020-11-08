@@ -103,7 +103,7 @@ class App extends React.Component<Props, State> {
                 <Form style={{ margin: '14px 0' }}>
                     <Form.Field required>
                         <label>Откуда</label>
-                        <Input onChange={this.onChange} value={address}/>
+                        <Input onChange={this.onChange} value={address} placeholder='Город, улица, дом'/>
                     </Form.Field>
                 </Form>
                 {selectedCrew &&
