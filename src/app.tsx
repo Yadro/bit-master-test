@@ -124,7 +124,7 @@ class App extends React.Component<Props, State> {
                                 style={{ width: '100%' }}
                                 primary
                                 onClick={this.makeOrder}
-                                disabled={address.length < 1 && !selectedCrew}
+                                disabled={address.length < 1 || !selectedCrew}
                             >
                                 Заказать
                             </Button>
