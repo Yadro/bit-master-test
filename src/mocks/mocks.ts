@@ -1,6 +1,6 @@
-import { CrewsInfoWrap, GetAvailableCrewsParams } from '../services/requestTypes';
+import { CrewsInfoWrap, RequestGetAvailableCrews } from '../services/requestTypes';
 
-export function getCrews(params: GetAvailableCrewsParams): CrewsInfoWrap {
+export function getCrews(params: RequestGetAvailableCrews): CrewsInfoWrap {
     const { lat, lon } = params.addresses[0];
     return {
         crews_info: [

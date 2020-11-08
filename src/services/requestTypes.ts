@@ -9,9 +9,19 @@ export interface Address {
     coords: Coords;
 }
 
-export interface GetAvailableCrewsParams {
+export interface Order extends Address {
+    crew_id: number;
+}
+
+export interface RequestGetAvailableCrews {
     source_time: string;
     addresses: RequestAddress[];
+}
+
+export interface RequestMakeOrder {
+    source_time: string;
+    addresses: RequestAddress[];
+    crew_id: number;
 }
 
 export interface Response<T> {

@@ -19,6 +19,8 @@ interface State {
 }
 
 class App extends React.Component<Props, State> {
+    timer: number = null;
+
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -29,8 +31,34 @@ class App extends React.Component<Props, State> {
         };
     }
 
+    componentWillUnmount() {
+        if (this.timer) {
+            window.clearTimeout(this.timer);
+        }
+    }
+
     onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        this.setState({ address: e.target.value });
+        const address = e.target.value;
+        this.setState({ address });
+        if (this.timer) {
+            window.clearTimeout(this.timer);
+        }
+        if (address.length) {
+            this.timer = window.setTimeout(() => {
+                this.onTypeAddress();
+            }, 2000);
+        }
+    };
+
+    onTypeAddress = async () => {
+        const { address } = this.state;
+        const coords = await MapHttpService.geocoding(address);
+        this.setState({
+            coords,
+        });
+        if (coords) {
+            await this.getCrew({ address, coords });
+        }
     };
 
     onChoosePoint = async (requestAddress: Address) => {
@@ -49,15 +77,6 @@ class App extends React.Component<Props, State> {
             selectedCrew,
         });
     }
-
-    onMakeOrder = async () => {
-        const { address } = this.state;
-        const coords = await MapHttpService.geocoding(address);
-        this.setState({
-           coords,
-        });
-        await this.getCrew({ address, coords });
-    };
 
     onChooseCrew = (crewId: number) => {
         const { availableCrews } = this.state;
@@ -95,14 +114,13 @@ class App extends React.Component<Props, State> {
                             <Button
                                 style={{ width: '100%' }}
                                 primary
-                                onClick={this.onMakeOrder}
+                                disabled={address.length < 1 && !!selectedCrew}
                             >{/* TODO align middle */}
                                 Заказать
                             </Button>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-
             </Container>
         );
     }
