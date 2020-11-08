@@ -86,6 +86,15 @@ class App extends React.Component<Props, State> {
         });
     }
 
+    makeOrder = async () => {
+        const { address, coords, selectedCrew } = this.state;
+        await MockHttpService.makeOrder({
+            address,
+            coords,
+            crew_id: selectedCrew.crew_id,
+        });
+    }
+
     render() {
         const { address, availableCrews, selectedCrew, coords } = this.state;
         return (
@@ -114,8 +123,9 @@ class App extends React.Component<Props, State> {
                             <Button
                                 style={{ width: '100%' }}
                                 primary
-                                disabled={address.length < 1 && !!selectedCrew}
-                            >{/* TODO align middle */}
+                                onClick={this.makeOrder}
+                                disabled={address.length < 1 && !selectedCrew}
+                            >
                                 Заказать
                             </Button>
                         </Grid.Column>

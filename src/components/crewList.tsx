@@ -34,7 +34,7 @@ export default class CrewList extends React.Component<Props> {
 
     render() {
         return (
-            <Card style={{ height: '100%' }}>
+            <Card style={{ height: '100%', width: '100%' }}>
                 <Card.Content>
                     {this.renderItems()}
                 </Card.Content>

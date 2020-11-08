@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import {
     Address,
     CrewInfo,
@@ -7,11 +8,12 @@ import {
     Response,
 } from './requestTypes';
 import { getCrews } from '../mocks/mocks';
+import { DATE_STAMP } from './constants';
 
 export default class MockHttpService {
     static getAvailableCrews(params: Address): Promise<CrewInfo[]> {
         const request: RequestGetAvailableCrews = {
-            source_time: '20130101010101', // TODO
+            source_time: format(new Date(), DATE_STAMP),
             addresses: [
                 {
                     address: params.address,
@@ -26,7 +28,7 @@ export default class MockHttpService {
 
     static makeOrder(order: Order) {
         const request: RequestMakeOrder = {
-            source_time: '20130101010101', // TODO
+            source_time: format(new Date(), DATE_STAMP),
             addresses: [
                 {
                     address: order.address,
