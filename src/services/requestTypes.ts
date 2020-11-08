@@ -21,10 +21,10 @@ export interface Response<T> {
 }
 
 export interface CrewsInfoWrap {
-    crews_info: CrewsInfo[];
+    crews_info: CrewInfo[];
 }
 
-export interface CrewsInfo {
+export interface CrewInfo {
     crew_id: number;
     car_mark: string;
     car_model: string;

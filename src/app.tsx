@@ -4,7 +4,7 @@ import { Button, Container, Grid, Input, Label } from 'semantic-ui-react';
 import Map from './components/map';
 import CrewList from './components/crewList';
 import MockHttpService from './services/mockHttpService';
-import { Address, CrewsInfo } from './services/requestTypes';
+import { Address, CrewInfo } from './services/requestTypes';
 import 'semantic-ui-css/semantic.min.css'
 import CrewCard from './components/crewCard';
 
@@ -14,7 +14,8 @@ interface State {
     address: string;
     lon: number;
     lat: number;
-    availableCrews: CrewsInfo[];
+    availableCrews: CrewInfo[];
+    selectedCrew: CrewInfo;
 }
 
 class App extends React.Component<Props, State> {
@@ -25,6 +26,7 @@ class App extends React.Component<Props, State> {
             lon: 0,
             lat: 0,
             availableCrews: [],
+            selectedCrew: null,
         };
     }
 
@@ -42,8 +44,14 @@ class App extends React.Component<Props, State> {
         this.setState(params);
 
         const availableCrews = await MockHttpService.getAvailableCrews(params);
+        const crews = availableCrews.data.crews_info;
+        let selectedCrew;
+        if (crews[0]) {
+            selectedCrew = crews[0];
+        }
         this.setState({
-            availableCrews: availableCrews.data.crews_info,
+            availableCrews: crews,
+            selectedCrew,
         });
     }
 
@@ -51,16 +59,16 @@ class App extends React.Component<Props, State> {
         // TODO
     };
 
-    onChooseCrew = () => {
-        // TODO
+    onChooseCrew = (crewId: number) => {
+        const { availableCrews } = this.state;
+        const selectedCrew = availableCrews.find(c => c.crew_id === crewId);
+        this.setState({
+            selectedCrew,
+        });
     }
 
     render() {
-        const { address, availableCrews } = this.state;
-        let bestCrew;
-        if (availableCrews[0]) {
-            bestCrew = availableCrews[0];
-        }
+        const { address, availableCrews, selectedCrew } = this.state;
         return (
             <Container>
                 <h1>Детали заказа</h1>
@@ -68,13 +76,13 @@ class App extends React.Component<Props, State> {
                     <Label>Откуда</Label>
                     <Input onChange={this.onChange} value={address}/>
                 </div>
-                {bestCrew &&
-                    <CrewCard crew={bestCrew}/>
+                {selectedCrew &&
+                    <CrewCard crew={selectedCrew}/>
                 }
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={10}>
-                            <Map onClick={this.onChoosePoint} crews={availableCrews}/>
+                            <Map crews={availableCrews} onClick={this.onChoosePoint}/>
                         </Grid.Column>
                         <Grid.Column width={6}>
                             <CrewList crews={availableCrews} onClick={this.onChooseCrew}/>

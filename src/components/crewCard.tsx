@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, Grid, Icon, Label } from 'semantic-ui-react';
-import { CrewsInfo } from '../services/requestTypes';
+import { CrewInfo } from '../services/requestTypes';
 
 interface Props {
-    crew: CrewsInfo;
+    crew: CrewInfo;
 }
 
 export default class CrewCard extends React.Component<Props> {

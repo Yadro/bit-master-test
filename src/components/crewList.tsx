@@ -1,9 +1,9 @@
 import React from 'react';
-import { CrewsInfo } from '../services/requestTypes';
 import { Card, List } from 'semantic-ui-react';
+import { CrewInfo } from '../services/requestTypes';
 
 interface Props {
-    crews: CrewsInfo[];
+    crews: CrewInfo[];
     onClick: (crewId: number) => void;
 }
 
@@ -18,7 +18,7 @@ export default class CrewList extends React.Component<Props> {
                         <List.Icon name='car' size='large' verticalAlign='middle'/>
                         <List.Content>
                             <List.Header as='a'
-                                onClick={onClick(crew.crew_id)}
+                                onClick={() => onClick(crew.crew_id)}
                             >
                                 {`${crew.car_mark} ${crew.car_model}`}
                             </List.Header>
