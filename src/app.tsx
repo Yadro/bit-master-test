@@ -6,6 +6,7 @@ import CrewList from './components/crewList';
 import MockHttpService from './services/mockHttpService';
 import { Address, CrewsInfo } from './services/requestTypes';
 import 'semantic-ui-css/semantic.min.css'
+import CrewCard from './components/crewCard';
 
 interface Props {}
 
@@ -56,6 +57,10 @@ class App extends React.Component<Props, State> {
 
     render() {
         const { address, availableCrews } = this.state;
+        let bestCrew;
+        if (availableCrews[0]) {
+            bestCrew = availableCrews[0];
+        }
         return (
             <Container>
                 <h1>Детали заказа</h1>
@@ -63,6 +68,9 @@ class App extends React.Component<Props, State> {
                     <Label>Откуда</Label>
                     <Input onChange={this.onChange} value={address}/>
                 </div>
+                {bestCrew &&
+                    <CrewCard crew={bestCrew}/>
+                }
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={10}>
