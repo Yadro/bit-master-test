@@ -1,16 +1,15 @@
-import { CrewsInfoWrap, GetAvailableCrewsParams, RequestAddress, Response } from './requestTypes';
+import { Address, CrewsInfoWrap, GetAvailableCrewsParams, Response } from './requestTypes';
 import { getCrews } from '../mocks/mocks';
 
-
 export default class MockHttpService {
-    static getAvailableCrews(params: RequestAddress): Promise<Response<CrewsInfoWrap>> {
+    static getAvailableCrews(params: Address): Promise<Response<CrewsInfoWrap>> {
         const request: GetAvailableCrewsParams = {
             source_time: '20130101010101', // TODO
             addresses: [
                 {
                     address: params.address,
-                    lat: params.lat,
-                    lon: params.lon,
+                    lat: params[0],
+                    lon: params[1],
                 }
             ]
         }

@@ -1,19 +1,19 @@
 import React, { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
+import 'semantic-ui-css/semantic.min.css'
 import { Button, Container, Form, Grid, Input } from 'semantic-ui-react';
 import Map from './components/map';
 import CrewList from './components/crewList';
-import MockHttpService from './services/mockHttpService';
-import { Address, CrewInfo } from './services/requestTypes';
-import 'semantic-ui-css/semantic.min.css'
 import CrewCard from './components/crewCard';
+import MapHttpService from './services/mapHttpService';
+import MockHttpService from './services/mockHttpService';
+import { Address, Coords, CrewInfo } from './services/requestTypes';
 
 interface Props {}
 
 interface State {
     address: string;
-    lon: number;
-    lat: number;
+    coords: Coords;
     availableCrews: CrewInfo[];
     selectedCrew: CrewInfo;
 }
@@ -23,8 +23,7 @@ class App extends React.Component<Props, State> {
         super(props);
         this.state = {
             address: '',
-            lon: 0,
-            lat: 0,
+            coords: null,
             availableCrews: [],
             selectedCrew: null,
         };
@@ -38,8 +37,7 @@ class App extends React.Component<Props, State> {
         const { address, coords } = requestAddress;
         const params = {
             address,
-            lat: coords[0],
-            lon: coords[1],
+            coords,
         };
         this.setState(params);
 
@@ -56,7 +54,11 @@ class App extends React.Component<Props, State> {
     }
 
     onMakeOrder = async () => {
-        // TODO
+        const { address } = this.state;
+        const coords = await MapHttpService.geocoding(address);
+        this.setState({
+           coords
+        });
     };
 
     onChooseCrew = (crewId: number) => {
@@ -68,7 +70,7 @@ class App extends React.Component<Props, State> {
     }
 
     render() {
-        const { address, availableCrews, selectedCrew } = this.state;
+        const { address, availableCrews, selectedCrew, coords } = this.state;
         return (
             <Container>
                 <h1>Детали заказа</h1>
@@ -84,7 +86,7 @@ class App extends React.Component<Props, State> {
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={10}>
-                            <Map crews={availableCrews} onClick={this.onChoosePoint}/>
+                            <Map crews={availableCrews} coords={coords} onClick={this.onChoosePoint}/>
                         </Grid.Column>
                         <Grid.Column width={6}>
                             <CrewList crews={availableCrews} onClick={this.onChooseCrew}/>
@@ -96,7 +98,7 @@ class App extends React.Component<Props, State> {
                                 style={{ width: '100%' }}
                                 primary
                                 onClick={this.onMakeOrder}
-                            >
+                            >{/* TODO align middle */}
                                 Заказать
                             </Button>
                         </Grid.Column>

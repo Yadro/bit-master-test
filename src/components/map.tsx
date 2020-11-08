@@ -1,11 +1,12 @@
 import React from 'react';
-import { Address, CrewInfo } from '../services/requestTypes';
+import { Address, Coords, CrewInfo } from '../services/requestTypes';
 import { isEqual } from '../services/helper';
 import '../types';
 
 interface Props {
     onClick: (address: Address) => void;
     crews: CrewInfo[];
+    coords: Coords;
 }
 
 export default class Map extends React.Component<Props> {
