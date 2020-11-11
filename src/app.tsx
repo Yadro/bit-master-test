@@ -1,5 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
+import { action, makeObservable, observable, runInAction } from 'mobx';
+import { observer } from 'mobx-react';
 import 'semantic-ui-css/semantic.min.css'
 import { Button, Container, Form, Grid, Input } from 'semantic-ui-react';
 import Map from './components/map';
@@ -12,23 +14,28 @@ import { Address, Coords, CrewInfo } from './services/requestTypes';
 interface Props {}
 
 interface State {
-    address: string;
-    coords: Coords;
     availableCrews: CrewInfo[];
     selectedCrew: CrewInfo;
 }
 
 class App extends React.Component<Props, State> {
     timer: number = null;
+    address: string = '';
+    coords: Coords = null;
+    availableCrews: CrewInfo[];
+    selectedCrew: CrewInfo[];
 
     constructor(props: Props) {
         super(props);
         this.state = {
-            address: '',
-            coords: null,
             availableCrews: [],
             selectedCrew: null,
         };
+        makeObservable(this, {
+            address: observable,
+            coords: observable,
+            onTypeAddress: action,
+        });
     }
 
     componentWillUnmount() {
@@ -37,24 +44,24 @@ class App extends React.Component<Props, State> {
         }
     }
 
-    onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onTypeAddress = (e: ChangeEvent<HTMLInputElement>) => {
         const address = e.target.value;
-        this.setState({ address });
+        this.address = address;
         if (this.timer) {
             window.clearTimeout(this.timer);
         }
         if (address.length) {
             this.timer = window.setTimeout(() => {
-                this.onTypeAddress();
+                this.runGeocoding();
             }, 2000);
         }
     };
 
-    onTypeAddress = async () => {
-        const { address } = this.state;
+    runGeocoding = async () => {
+        const { address } = this;
         const coords = await MapHttpService.geocoding(address);
-        this.setState({
-            coords,
+        runInAction(() => {
+            this.coords = coords;
         });
         if (coords) {
             await this.getCrew({ address, coords });
@@ -62,7 +69,8 @@ class App extends React.Component<Props, State> {
     };
 
     onChoosePoint = async (requestAddress: Address) => {
-        this.setState(requestAddress);
+        this.address = requestAddress.address;
+        this.coords = requestAddress.coords;
         await this.getCrew(requestAddress);
     }
 
@@ -87,7 +95,8 @@ class App extends React.Component<Props, State> {
     }
 
     makeOrder = async () => {
-        const { address, coords, selectedCrew } = this.state;
+        const { address, coords } = this;
+        const { selectedCrew } = this.state;
         await MockHttpService.makeOrder({
             address,
             coords,
@@ -96,14 +105,15 @@ class App extends React.Component<Props, State> {
     }
 
     render() {
-        const { address, availableCrews, selectedCrew, coords } = this.state;
+        const { address, coords } = this;
+        const { availableCrews, selectedCrew } = this.state;
         return (
             <Container>
                 <h1>Детали заказа</h1>
                 <Form style={{ margin: '14px 0' }}>
                     <Form.Field required>
                         <label>Откуда</label>
-                        <Input onChange={this.onChange} value={address} placeholder='Город, улица, дом'/>
+                        <Input onChange={this.onTypeAddress} value={address} placeholder='Город, улица, дом'/>
                     </Form.Field>
                 </Form>
                 {selectedCrew &&
@@ -136,7 +146,9 @@ class App extends React.Component<Props, State> {
     }
 }
 
+const AppObserver = observer(App);
+
 ReactDOM.render(
-    <App/>,
+    <AppObserver/>,
     document.querySelector('#root'),
 );
