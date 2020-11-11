@@ -13,17 +13,12 @@ import { Address, Coords, CrewInfo } from './services/requestTypes';
 
 interface Props {}
 
-interface State {
-    availableCrews: CrewInfo[];
-    selectedCrew: CrewInfo;
-}
-
-class App extends React.Component<Props, State> {
+class App extends React.Component<Props> {
     timer: number = null;
     address: string = '';
     coords: Coords = null;
-    availableCrews: CrewInfo[];
-    selectedCrew: CrewInfo[];
+    availableCrews: CrewInfo[] = [];
+    selectedCrew: CrewInfo = null;
 
     constructor(props: Props) {
         super(props);
@@ -34,7 +29,12 @@ class App extends React.Component<Props, State> {
         makeObservable(this, {
             address: observable,
             coords: observable,
+            availableCrews: observable,
+            selectedCrew: observable,
             onTypeAddress: action,
+            runGeocoding: action,
+            onChoosePoint: action,
+            onChooseCrew: action,
         });
     }
 
@@ -76,27 +76,21 @@ class App extends React.Component<Props, State> {
 
     getCrew = async (address: Address) => {
         const availableCrews = await MockHttpService.getAvailableCrews(address);
-        let selectedCrew;
-        if (availableCrews[0]) {
-            selectedCrew = availableCrews[0];
-        }
-        this.setState({
-            availableCrews,
-            selectedCrew,
+        runInAction(() => {
+            if (availableCrews[0]) {
+                this.selectedCrew = availableCrews[0];
+            }
+            this.availableCrews = availableCrews;
         });
     }
 
     onChooseCrew = (crewId: number) => {
-        const { availableCrews } = this.state;
-        const selectedCrew = availableCrews.find(c => c.crew_id === crewId);
-        this.setState({
-            selectedCrew,
-        });
+        const { availableCrews } = this;
+        this.selectedCrew = availableCrews.find(c => c.crew_id === crewId);
     }
 
     makeOrder = async () => {
-        const { address, coords } = this;
-        const { selectedCrew } = this.state;
+        const { address, coords, selectedCrew } = this;
         await MockHttpService.makeOrder({
             address,
             coords,
@@ -105,8 +99,7 @@ class App extends React.Component<Props, State> {
     }
 
     render() {
-        const { address, coords } = this;
-        const { availableCrews, selectedCrew } = this.state;
+        const { address, coords, availableCrews, selectedCrew } = this;
         return (
             <Container>
                 <h1>Детали заказа</h1>
